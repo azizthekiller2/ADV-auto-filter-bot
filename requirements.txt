@@ -7,7 +7,6 @@ umongo
 requests
 bs4
 shortzy
-datetime
 pytz
 aiohttp
 
