@@ -534,3 +534,7 @@ This Is An Open-Source Project. You Can Use It Freely, But Selling The Source Co
 
 
     
+
+    MAINTENANCE_TXT = """<b>🛑 ꜱᴇʀᴠɪᴄᴇ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ 🛑</b>
+<b>ʜᴇʏ {}, ᴡᴇ ᴀʀᴇ ᴄᴜʀʀᴇɴᴛʟʏ ᴜᴘᴅᴀᴛɪɴɢ ᴏᴜʀ ꜱʏꜱᴛᴇᴍꜱ ᴛᴏ ꜱᴇʀᴠᴇ ʏᴏᴜ ʙᴇᴛᴛᴇʀ. ᴛʜᴇ ꜱᴇʀᴠɪᴄᴇ ɪꜱ ᴛᴇᴍᴘᴏʀᴀʀɪʟʏ ᴅɪꜱᴀʙʟᴇᴅ.</b>
+<blockquote>ᴛʜᴇ ꜱᴇʀᴠɪᴄᴇ ɪꜱ ᴄᴜʀʀᴇɴᴛʟʏ ᴜɴᴅᴇʀ ᴍᴀɪɴᴛᴇɴᴀɴᴄᴇ. ᴘʟᴇᴀꜱᴇ ᴛʀʏ ᴀɢᴀɪɴ ʟᴀᴛᴇʀ. 😊</blockquote>"""

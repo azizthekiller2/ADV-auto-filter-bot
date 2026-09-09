@@ -619,3 +619,43 @@ async def toggle_verify_cmd(client, message):
         )
     except Exception:
         pass
+
+# ─────────────────────────────────────────────────────────────────
+#  /admincommandlist (admin only)
+# ─────────────────────────────────────────────────────────────────
+@Client.on_message(filters.command("admincommandlist") & filters.user(ADMINS))
+async def admin_command_list(client, message):
+    text = """<b>🛠️ Admin Commands List:</b>
+
+<b>Bot Management:</b>
+• <code>/status</code> - Bot uptime & stats
+• <code>/restart</code> - Restart the bot
+• <code>/logs</code> - View bot logs
+• <code>/info</code> - Bot information
+• <code>/id</code> - Get user or chat ID
+• <code>/reload</code> - Reload bot settings
+• <code>/maintenance</code> - Toggle maintenance mode
+
+<b>Database & Files:</b>
+• <code>/clear_junk</code> - Clear junk files
+• <code>/details</code> - Get file details
+
+<b>Broadcast & Users:</b>
+• <code>/broadcast</code> - Broadcast to all users
+• <code>/grp_broadcast</code> - Broadcast to all groups
+• <code>/send</code> - Send message to a user
+• <code>/ban</code> - Ban a user
+• <code>/unban</code> - Unban a user
+• <code>/trial_reset</code> - Reset user free trial
+
+<b>Settings Configuration:</b>
+• <code>/set_fsub</code> - Set force subscribe channel
+• <code>/set_log_channel</code> - Set log channel
+• <code>/set_shortner</code> - Set URL shortener
+• <code>/set_time</code> - Set file auto-delete time
+• <code>/set_tutorial</code> - Set tutorial link
+• <code>/pm_search</code> - Toggle PM search
+• <code>/movie_update</code> - Toggle movie update alerts
+• <code>/trendlist</code> - View trending list
+"""
+    await message.reply_text(text, parse_mode=enums.ParseMode.HTML)

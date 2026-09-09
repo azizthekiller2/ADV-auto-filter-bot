@@ -296,8 +296,6 @@ async def dreamxbotz_start():
         BotCommand("id",              "Get user or chat ID"),
         BotCommand("reload",          "Reload bot settings"),
         BotCommand("send",            "Send message to a user"),
-        BotCommand("deletefiles",     "Delete files from DB"),
-        BotCommand("deleteall",       "Delete all files from DB"),
         BotCommand("set_fsub",        "Set force subscribe channel"),
         BotCommand("set_log_channel", "Set log channel"),
         BotCommand("set_shortner",    "Set URL shortener"),
@@ -310,11 +308,14 @@ async def dreamxbotz_start():
         BotCommand("clear_junk",      "Clear junk files"),
         BotCommand("details",         "Get file details"),
     ]
+    from pyrogram.types import BotCommandScopeChat
     try:
         await dreamxbotz.set_bot_commands(user_commands, scope=BotCommandScopeDefault())
-        await dreamxbotz.set_bot_commands(
-            admin_commands, scope=BotCommandScopeAllPrivateChats()
-        )
+        for admin_id in ADMINS:
+            try:
+                await dreamxbotz.set_bot_commands(admin_commands, scope=BotCommandScopeChat(chat_id=admin_id))
+            except Exception as e:
+                logging.warning(f"Failed to set admin commands for {admin_id}: {e}")
         logging.info("Bot commands menu set successfully.")
     except Exception as _e:
         logging.warning(f"Could not set bot commands: {_e}")

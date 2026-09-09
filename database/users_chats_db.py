@@ -429,6 +429,12 @@ class Database:
     async def movie_update_status(self, bot_id):
         return await self.get_bot_setting(bot_id, 'MOVIE_UPDATE_NOTIFICATION', MOVIE_UPDATE_NOTIFICATION)
 
+    async def maintenance_status(self, bot_id):
+        return await self.get_bot_setting(bot_id, "MAINTENANCE", False)
+
+    async def update_maintenance_status(self, bot_id, enable):
+        await self.update_bot_setting(bot_id, "MAINTENANCE", enable)
+
     async def update_movie_update_status(self, bot_id, enable):
         await self.update_bot_setting(bot_id, 'MOVIE_UPDATE_NOTIFICATION', enable)
      
