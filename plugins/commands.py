@@ -1534,7 +1534,7 @@ async def verify(bot, message):
                 info.IS_VERIFY = False
                 bot_id = getattr(temp, 'ME', 0)
                 if bot_id:
-                    await db.update_bot_setting(bot_id, "IS_VERIFY", False)
+                    await db.botcol.update_one({'setting': 'IS_VERIFY'}, {'$set': {'IS_VERIFY': False}}, upsert=True)
                 temp.SETTINGS.clear()
                 return await message.reply_text("✗ <b>ᴠᴇʀɪꜰʏ sᴜᴄᴄᴇssꜰᴜʟʟʏ ᴅɪsᴀʙʟᴇᴅ ɢʟᴏʙᴀʟʟʏ & ꜰᴏʀ ᴘᴍ.</b>\nUsers will now receive files directly without shorteners or ads.")
             elif command_text == "on":
@@ -1542,7 +1542,7 @@ async def verify(bot, message):
                 info.IS_VERIFY = True
                 bot_id = getattr(temp, 'ME', 0)
                 if bot_id:
-                    await db.update_bot_setting(bot_id, "IS_VERIFY", True)
+                    await db.botcol.update_one({'setting': 'IS_VERIFY'}, {'$set': {'IS_VERIFY': True}}, upsert=True)
                 temp.SETTINGS.clear()
                 return await message.reply_text("✓ <b>ᴠᴇʀɪꜰʏ sᴜᴄᴄᴇssꜰᴜʟʟʏ ᴇɴᴀʙʟᴇᴅ ɢʟᴏʙᴀʟʟʏ & ꜰᴏʀ ᴘᴍ.</b>")
             else:
@@ -1568,7 +1568,8 @@ async def verify_status(bot, message):
         if message.chat.type == enums.ChatType.PRIVATE:
             import info
             bot_id = getattr(temp, 'ME', 0)
-            is_verify = await db.get_bot_setting(bot_id, "IS_VERIFY", info.IS_VERIFY) if bot_id else info.IS_VERIFY
+            bot_doc = await db.botcol.find_one({'setting': 'IS_VERIFY'})
+is_verify = bot_doc['IS_VERIFY'] if bot_doc and 'IS_VERIFY' in bot_doc else info.IS_VERIFY
             status_icon = "✅ ᴇɴᴀʙʟᴇᴅ" if is_verify else "❌ ᴅɪsᴀʙʟᴇᴅ"
             text = (
                 f"<b>📊 ɢʟᴏʙᴀʟ & ᴘᴍ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ sᴛᴀᴛᴜs</b>\n\n"

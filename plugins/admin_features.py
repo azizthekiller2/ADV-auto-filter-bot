@@ -591,7 +591,7 @@ async def toggle_verify_cmd(client, message):
             info.IS_VERIFY = enable
             bot_id = getattr(temp, 'ME', 0)
             if bot_id:
-                await db.update_bot_setting(bot_id, "IS_VERIFY", enable)
+                await db.botcol.update_one({'setting': 'IS_VERIFY'}, {'$set': {'IS_VERIFY': enable}}, upsert=True)
             temp.SETTINGS.clear()
             status_text = "✅ <b>Enabled</b>" if enable else "❌ <b>Disabled</b>"
             action_desc = (

@@ -154,8 +154,8 @@ class Database:
         await self.grp.update_one({'id': int(id)}, {'$set': {'settings': settings}})
                                   
     async def get_settings(self, id):
-        bot_id = getattr(temp, 'ME', 0)
-        global_verify = await self.get_bot_setting(bot_id, "IS_VERIFY", IS_VERIFY) if bot_id else IS_VERIFY
+        bot_doc = await self.botcol.find_one({'setting': 'IS_VERIFY'})
+        global_verify = bot_doc['IS_VERIFY'] if bot_doc and 'IS_VERIFY' in bot_doc else IS_VERIFY
         default = {
             'button': BUTTON_MODE,
             'botpm': P_TTI_SHOW_OFF,
