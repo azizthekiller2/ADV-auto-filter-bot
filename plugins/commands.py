@@ -1527,12 +1527,29 @@ async def reset_group_callback(client, callback_query):
 async def verify(bot, message):
     try:
         chat_type = message.chat.type
+        command_text = message.text.split(' ')[1].lower() if len(message.text.split(' ')) > 1 else None
         if chat_type == enums.ChatType.PRIVATE:
-            return await message.reply_text("ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ᴡᴏʀᴋs ᴏɴʟʏ ɪɴ ɢʀᴏᴜᴘs!")
+            if command_text == "off":
+                import info
+                info.IS_VERIFY = False
+                bot_id = getattr(temp, 'ME', 0)
+                if bot_id:
+                    await db.update_bot_setting(bot_id, "IS_VERIFY", False)
+                temp.SETTINGS.clear()
+                return await message.reply_text("✗ <b>ᴠᴇʀɪꜰʏ sᴜᴄᴄᴇssꜰᴜʟʟʏ ᴅɪsᴀʙʟᴇᴅ ɢʟᴏʙᴀʟʟʏ & ꜰᴏʀ ᴘᴍ.</b>\nUsers will now receive files directly without shorteners or ads.")
+            elif command_text == "on":
+                import info
+                info.IS_VERIFY = True
+                bot_id = getattr(temp, 'ME', 0)
+                if bot_id:
+                    await db.update_bot_setting(bot_id, "IS_VERIFY", True)
+                temp.SETTINGS.clear()
+                return await message.reply_text("✓ <b>ᴠᴇʀɪꜰʏ sᴜᴄᴄᴇssꜰᴜʟʟʏ ᴇɴᴀʙʟᴇᴅ ɢʟᴏʙᴀʟʟʏ & ꜰᴏʀ ᴘᴍ.</b>")
+            else:
+                return await message.reply_text("ʜɪ, ᴛᴏ ᴇɴᴀʙʟᴇ ᴠᴇʀɪꜰʏ ɪɴ ᴘᴍ/ɢʟᴏʙᴀʟ, ᴜsᴇ <code>/verify on</code> ᴀɴᴅ ᴛᴏ ᴅɪsᴀʙʟᴇ, ᴜsᴇ <code>/verify off</code>.")
         if chat_type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
             grpid = message.chat.id
             title = message.chat.title
-            command_text = message.text.split(' ')[1] if len(message.text.split(' ')) > 1 else None
             if command_text == "off":
                 await save_group_settings(grpid, 'is_verify', False)
                 return await message.reply_text("✗ ᴠᴇʀɪꜰʏ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅɪsᴀʙʟᴇᴅ.")
@@ -1549,10 +1566,16 @@ async def verify(bot, message):
 async def verify_status(bot, message):
     try:
         if message.chat.type == enums.ChatType.PRIVATE:
-            return await message.reply_text(
-                "⚠️ ᴜsᴇ ᴛʜɪs ᴄᴏᴍᴍᴀɴᴅ ɪɴ ᴀ ɢʀᴏᴜᴘ ᴛᴏ ᴄʜᴇᴄᴋ ɪᴛs ᴠᴇʀɪꜰʏ sᴇᴛᴛɪɴɢs.",
-                parse_mode=enums.ParseMode.HTML
+            import info
+            bot_id = getattr(temp, 'ME', 0)
+            is_verify = await db.get_bot_setting(bot_id, "IS_VERIFY", info.IS_VERIFY) if bot_id else info.IS_VERIFY
+            status_icon = "✅ ᴇɴᴀʙʟᴇᴅ" if is_verify else "❌ ᴅɪsᴀʙʟᴇᴅ"
+            text = (
+                f"<b>📊 ɢʟᴏʙᴀʟ & ᴘᴍ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ sᴛᴀᴛᴜs</b>\n\n"
+                f"<b>🔐 ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ / sʜᴏʀᴛɴᴇʀ:</b> {status_icon}\n\n"
+                f"💡 <i>Tip: Use <code>/disableverify</code> or <code>/verify off</code> to disable ads/shorteners in PM.</i>"
             )
+            return await message.reply_text(text, parse_mode=enums.ParseMode.HTML)
         grp_id = message.chat.id
         title = message.chat.title or str(grp_id)
         settings = await get_settings(grp_id)

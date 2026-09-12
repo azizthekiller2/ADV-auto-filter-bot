@@ -154,6 +154,8 @@ class Database:
         await self.grp.update_one({'id': int(id)}, {'$set': {'settings': settings}})
                                   
     async def get_settings(self, id):
+        bot_id = getattr(temp, 'ME', 0)
+        global_verify = await self.get_bot_setting(bot_id, "IS_VERIFY", IS_VERIFY) if bot_id else IS_VERIFY
         default = {
             'button': BUTTON_MODE,
             'botpm': P_TTI_SHOW_OFF,
@@ -175,7 +177,7 @@ class Database:
             'api_two': SHORTENER_API2,
             'shortner_three': SHORTENER_WEBSITE3,
             'api_three': SHORTENER_API3,
-            'is_verify': IS_VERIFY,
+            'is_verify': global_verify,
             'verify_time': TWO_VERIFY_GAP,
             'third_verify_time': THREE_VERIFY_GAP,
             'caption': CUSTOM_FILE_CAPTION,

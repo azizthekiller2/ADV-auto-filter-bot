@@ -537,7 +537,6 @@ async def dellang_confirm(client, query):
             chat_id=LOG_CHANNEL,
             text=(
                 f"<b>#LANG_DELETE\n\n"
-                f"👤 Admin: {query.from_user.mention}\n"
                 f"🌐 Language: {label}\n"
                 f"🗑 Deleted: {total} files (DB1:{deleted1} DB2:{deleted2})</b>"
             )
@@ -553,71 +552,88 @@ async def dellang_cancel(client, query):
 
 
 # ─────────────────────────────────────────────────────────────────
-#  /enableverify  &  /disableverify  (admin only)
+#  /enableverify, /disableverify, /enableshortner, /disableshortner (admin only)
 # ─────────────────────────────────────────────────────────────────
-
-@Client.on_message(filters.command(["enableverify", "disableverify"]) & filters.user(ADMINS))
+@Client.on_message(filters.command(["enableverify", "disableverify", "enableshortner", "disableshortner"]) & filters.user(ADMINS))
 async def toggle_verify_cmd(client, message):
     """
-    In a group:  /enableverify   or  /disableverify
-    In PM:       /enableverify <group_id>   or  /disableverify <group_id>
+    In a group:  /enableverify, /disableverify, /enableshortner, /disableshortner
+    In PM:       /disableverify [all|pm|global]  -> Toggles globally & for PM
+                 /disableverify <group_id>       -> Toggles for specific group
     """
-    cmd = message.command[0].lower()   # 'enableverify' or 'disableverify'
-    enable = (cmd == "enableverify")
+    cmd = message.command[0].lower()
+    enable = cmd in ["enableverify", "enableshortner"]
 
     # Determine target chat
     if message.chat.type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
         grp_id = message.chat.id
         grp_label = message.chat.title or str(grp_id)
+        settings = await get_settings(grp_id)
+        current = settings.get("is_verify", IS_VERIFY)
+        if enable and current:
+            return await message.reply_text(
+                f"ℹ️ Verification is already <b>enabled</b> for <code>{grp_id}</code>."
+            )
+        if not enable and not current:
+            return await message.reply_text(
+                f"ℹ️ Verification is already <b>disabled</b> for <code>{grp_id}</code>."
+            )
+        await save_group_settings(grp_id, "is_verify", enable)
+        status_text = "✅ <b>Enabled</b>" if enable else "❌ <b>Disabled</b>"
+        await message.reply_text(
+            f"{status_text} verification/shortener for group <code>{grp_id}</code>\n"
+        )
     else:
-        # PM — requires a group ID argument
+        # PM
         args = message.command[1:]
-        if not args:
-            return await message.reply_text(
-                f"<b>Usage (in PM):</b>\n"
-                f"<code>/{cmd} &lt;group_id&gt;</code>\n\n"
-                f"Or send the command directly inside the target group."
+        if not args or args[0].lower() in ["all", "global", "pm", "bot"]:
+            import info
+            info.IS_VERIFY = enable
+            bot_id = getattr(temp, 'ME', 0)
+            if bot_id:
+                await db.update_bot_setting(bot_id, "IS_VERIFY", enable)
+            temp.SETTINGS.clear()
+            status_text = "✅ <b>Enabled</b>" if enable else "❌ <b>Disabled</b>"
+            action_desc = (
+                "Users will now be asked to verify via shortener before receiving files."
+                if enable else
+                "Users will now receive files <b>directly with zero shorteners, zero ads, and zero website redirects</b>!"
             )
-        try:
-            grp_id = int(args[0])
-        except ValueError:
-            return await message.reply_text(
-                "❌ Invalid group ID — must be a number (e.g. <code>-100123456789</code>)."
-            )
-        grp_label = str(grp_id)
-
-    # Read current state
-    settings = await get_settings(grp_id)
-    current = settings.get("is_verify", IS_VERIFY)
-
-    if enable and current:
-        return await message.reply_text(
-            f"ℹ️ Verification is already <b>enabled</b> for <code>{grp_id}</code>."
-        )
-    if not enable and not current:
-        return await message.reply_text(
-            f"ℹ️ Verification is already <b>disabled</b> for <code>{grp_id}</code>."
-        )
-
-    await save_group_settings(grp_id, "is_verify", enable)
-
-    status_text = "✅ <b>Enabled</b>" if enable else "❌ <b>Disabled</b>"
-    await message.reply_text(
-        f"{status_text} verification for group <code>{grp_id}</code>\n"
-        f"<b>Group:</b> {html.escape(grp_label)}"
-    )
+            grp_label = "Global & PM"
+            reply_msg = f"{status_text} <b>Shortener Verification globally & for PM!</b>\n\n{action_desc}"
+            await message.reply_text(reply_msg)
+        else:
+            try:
+                grp_id = int(args[0])
+            except ValueError:
+                return await message.reply_text(
+                    "❌ Invalid group ID — must be a number (e.g. <code>-100123456789</code>) or <code>global</code>."
+                )
+            grp_label = str(grp_id)
+            settings = await get_settings(grp_id)
+            current = settings.get("is_verify", IS_VERIFY)
+            if enable and current:
+                return await message.reply_text(
+                    f"ℹ️ Verification is already <b>enabled</b> for <code>{grp_id}</code>."
+                )
+            if not enable and not current:
+                return await message.reply_text(
+                    f"ℹ️ Verification is already <b>disabled</b> for <code>{grp_id}</code>."
+                )
+            await save_group_settings(grp_id, "is_verify", enable)
+            status_text = "✅ <b>Enabled</b>" if enable else "❌ <b>Disabled</b>"
+            await save_group_settings(grp_id, "is_verify", enable)
+            status_text = "✅ <b>Enabled</b>" if enable else "❌ <b>Disabled</b>"
+            await message.reply_text(f"{status_text} verification for group <code>{grp_id}</code>\n<b>Group:</b> {html.escape(grp_label)}")
 
     try:
+        toggle_state = "ON" if enable else "OFF"
         await client.send_message(
             chat_id=LOG_CHANNEL,
-            text=(
-                f"<b>#VERIFY_TOGGLE\n\n"
-                f"👤 Admin: {message.from_user.mention}\n"
-                f"🏠 Group: {html.escape(grp_label)} (<code>{grp_id}</code>)\n"
-                f"🔘 Verification: {'ON' if enable else 'OFF'}</b>"
-            )
+            text=f"<b>#VERIFY_TOGGLE\n\n👤 Admin: {message.from_user.mention}\n🏠 Target: {html.escape(grp_label)}\n🔘 Verification / Shortener: {toggle_state}</b>"
         )
     except Exception:
+        pass
         pass
 
 # ─────────────────────────────────────────────────────────────────
@@ -653,6 +669,8 @@ async def admin_command_list(client, message):
 • <code>/set_log_channel</code> - Set log channel
 • <code>/set_shortner</code> - Set URL shortener
 • <code>/set_time</code> - Set file auto-delete time
+• <code>/disableverify</code> or <code>/disableshortner</code> - Disable shorteners/ads (PM or Group)
+• <code>/enableverify</code> or <code>/enableshortner</code> - Enable shorteners/ads
 • <code>/set_tutorial</code> - Set tutorial link
 • <code>/pm_search</code> - Toggle PM search
 • <code>/movie_update</code> - Toggle movie update alerts
