@@ -1569,7 +1569,7 @@ async def verify_status(bot, message):
             import info
             bot_id = getattr(temp, 'ME', 0)
             bot_doc = await db.botcol.find_one({'setting': 'IS_VERIFY'})
-is_verify = bot_doc['IS_VERIFY'] if bot_doc and 'IS_VERIFY' in bot_doc else info.IS_VERIFY
+            is_verify = bot_doc['IS_VERIFY'] if bot_doc and 'IS_VERIFY' in bot_doc else info.IS_VERIFY
             status_icon = "✅ ᴇɴᴀʙʟᴇᴅ" if is_verify else "❌ ᴅɪsᴀʙʟᴇᴅ"
             text = (
                 f"<b>📊 ɢʟᴏʙᴀʟ & ᴘᴍ ᴠᴇʀɪꜰɪᴄᴀᴛɪᴏɴ sᴛᴀᴛᴜs</b>\n\n"
