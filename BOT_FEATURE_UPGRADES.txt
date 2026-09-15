@@ -13,11 +13,10 @@ TABLE OF CONTENTS
 2. Priority 1: Smart Season & Episode Auto-Grouper
 3. Priority 2: Quality & Resolution Filter Badges (480p / 720p / 1080p / 4K)
 4. Priority 3: Fuzzy Search & Typo Auto-Correction (Did You Mean?)
-5. Priority 4: /fsub Command Alias & Interactive FSub Improvements
-6. Priority 5: Telegram In-App WebApp Streaming (Embedded Player)
-7. Priority 6: Audio & Language Tag Detection ([Hin], [Eng], [Multi])
-8. Priority 7: Unique Hash Duplicate Deduplication in MongoDB
-9. Implementation & Testing Guide
+5. Priority 4: Telegram In-App WebApp Streaming (Embedded Player)
+6. Priority 5: Audio & Language Tag Detection ([Hin], [Eng], [Multi])
+7. Priority 6: Unique Hash Duplicate Deduplication in MongoDB
+8. Implementation & Testing Guide
 
 ================================================================================
 1. EXECUTIVE SUMMARY
@@ -28,6 +27,7 @@ ecosystem:
   * High-speed multi-threaded downloads via 1DM/ADM intent schemes.
   * Robust Nginx reverse proxying on Port 80 avoiding Cloudflare 8080 timeouts.
   * Companion host health monitoring (health_bot.service).
+  * Force-Sub (/fsub & /set_fsub) with interactive [ ♻️ TRY AGAIN ♻️ ] check.
 
 The recommendations below focus on elevating your bot from a raw "file dump"
 indexer into a polished, streaming-grade media hub for your group communities.
@@ -104,46 +104,24 @@ BENEFIT:
 Eliminates over 40% of false "file missing" complaints.
 
 ================================================================================
-5. PRIORITY 4: /fsub ALIAS 5. PRIORITY 4: /fsub COMMAND ALIAS & INTERACTIVE FSUB IMPROVEMENTS INTERACTIVE FSUB (ALREADY ACTIVE)
-================================================================================
-PROBLEM:
-Currently your bot uses `/set_fsub`. Admins often type `/fsub` expecting it
-to work, leading to confusion.
-
-SOLUTION / UPGRADE SPEC:
-1. Add command aliases in `plugins/commands.py`:
-   @Client.on_message(filters.command(['set_fsub', 'fsub']))
-2. Add sub-commands:
-   - `/fsub` or `/fsub list` : Shows currently connected channels and invite status.
-   - `/fsub remove <channel_id>` : Removes a single channel without wiping all 5.
-   - `/fsub clear` : Clears all force-sub channels for that group.
-3. User Verification Button:
-   When user is prompted to join channels, include a callback button:
-   `[ ✅ I Have Joined ]` which immediately re-checks membership and sends the file
-   without forcing the user to re-type the search query.
-
-BENEFIT:
-Seamless administrative control and higher channel join conversion rates.
-
-================================================================================
-6. PRIORITY 5: TELEGRAM IN-APP WEBAPP STREAMING (EMBEDDED PLAYER)
+5. PRIORITY 4: TELEGRAM IN-APP WEBAPP STREAMING (EMBEDDED PLAYER)
 ================================================================================
 PROBLEM:
 Tapping the streaming URL opens an external mobile browser, interrupting the
 Telegram chatting experience.
 
 SOLUTION / UPGRADE SPEC:
-1. Use Pyrogram's `InlineKeyboardButton(text="▶️ Watch Online", web_app=WebAppInfo(url=stream_url))`.
-2. Inside `req.html`, Telegram WebApp SDK (`telegram-web-app.js`) automatically
+1. Use Pyrogram's InlineKeyboardButton(text="▶️ Watch Online", web_app=WebAppInfo(url=stream_url)).
+2. Inside req.html, Telegram WebApp SDK (telegram-web-app.js) automatically
    adjusts to Telegram's viewport theme (dark mode / light mode).
-3. Keep the `⚡ 1DM / Fast DL` button prominent inside the WebApp player so users
+3. Keep the ⚡ 1DM / Fast DL button prominent inside the WebApp player so users
    who want external multi-threaded downloads still have 1-tap access.
 
 BENEFIT:
 Native, premium user experience that keeps users directly inside your Telegram bot.
 
 ================================================================================
-7. PRIORITY 6: AUDIO & LANGUAGE TAG DETECTION ([HIN], [ENG], [MULTI])
+6. PRIORITY 5: AUDIO & LANGUAGE TAG DETECTION ([HIN], [ENG], [MULTI])
 ================================================================================
 PROBLEM:
 Group members constantly ask: "Is this Hindi?", "Tamil dubbed available?".
@@ -154,22 +132,22 @@ SOLUTION / UPGRADE SPEC:
    - [ 🇺🇸 Eng ] for English
    - [ 🌐 Dual / Multi ] for multi-audio tracks
 2. Button Format:
-   `[ 🎬 Spider-Man (2002) • 1080p • 🇮🇳 Hin+Eng ]`
+   [ 🎬 Spider-Man (2002) • 1080p • 🇮🇳 Hin+Eng ]
 
 BENEFIT:
 Instantly clarifies audio language before the user wastes time downloading.
 
 ================================================================================
-8. PRIORITY 7: UNIQUE HASH DUPLICATE DEDUPLICATION IN MONGODB
+7. PRIORITY 6: UNIQUE HASH DUPLICATE DEDUPLICATION IN MONGODB
 ================================================================================
 PROBLEM:
 Multiple source channels often contain the identical file with slightly different
 channel watermarks or file names, creating duplicate clutter.
 
 SOLUTION / UPGRADE SPEC:
-1. Telegram provides `file_unique_id` for every document and video.
-2. During indexing (`plugins/index.py` or `/index` command):
-   - Check if `file_unique_id` or `(file_size, file_duration)` already exists in MongoDB.
+1. Telegram provides file_unique_id for every document and video.
+2. During indexing (plugins/index.py or /index command):
+   - Check if file_unique_id or (file_size, file_duration) already exists in MongoDB.
    - If it exists, append the new name as an alias/alternate keyword rather than
      inserting a separate database document.
 
@@ -177,9 +155,9 @@ BENEFIT:
 Saves MongoDB database storage, keeps indexes fast, and prevents duplicate button rows.
 
 ================================================================================
-9. IMPLEMENTATION & TESTING GUIDE
+8. IMPLEMENTATION & TESTING GUIDE
 ================================================================================
-Safe deployment workflow on your OCI VM (`144.24.154.135`):
+Safe deployment workflow on your OCI VM (144.24.154.135):
 
 1. Edit code locally or in repo branch:
    cd /home/ubuntu/ADV-auto-filter-bot
@@ -194,5 +172,5 @@ Safe deployment workflow on your OCI VM (`144.24.154.135`):
    journalctl -u adv_filter_bot -f
 
 ================================================================================
-FILE END - Saved as: BOT_FEATURE_UPGRADES.txt
+FILE END
 ================================================================================
