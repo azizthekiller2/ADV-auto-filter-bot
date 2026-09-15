@@ -104,7 +104,7 @@ BENEFIT:
 Eliminates over 40% of false "file missing" complaints.
 
 ================================================================================
-5. PRIORITY 4: /fsub COMMAND ALIAS & INTERACTIVE FSUB IMPROVEMENTS
+5. PRIORITY 4: /fsub ALIAS 5. PRIORITY 4: /fsub COMMAND ALIAS & INTERACTIVE FSUB IMPROVEMENTS INTERACTIVE FSUB (ALREADY ACTIVE)
 ================================================================================
 PROBLEM:
 Currently your bot uses `/set_fsub`. Admins often type `/fsub` expecting it
