@@ -13,10 +13,9 @@ TABLE OF CONTENTS
 2. Priority 1: Smart Season & Episode Auto-Grouper
 3. Priority 2: Quality & Resolution Filter Badges (480p / 720p / 1080p / 4K)
 4. Priority 3: Fuzzy Search & Typo Auto-Correction (Did You Mean?)
-5. Priority 4: Telegram In-App WebApp Streaming (Embedded Player)
-6. Priority 5: Audio & Language Tag Detection ([Hin], [Eng], [Multi])
-7. Priority 6: Unique Hash Duplicate Deduplication in MongoDB
-8. Implementation & Testing Guide
+5. Priority 4: Audio & Language Tag Detection ([Hin], [Eng], [Multi])
+6. Priority 5: Unique Hash Duplicate Deduplication in MongoDB
+7. Implementation & Testing Guide
 
 ================================================================================
 1. EXECUTIVE SUMMARY
@@ -104,24 +103,7 @@ BENEFIT:
 Eliminates over 40% of false "file missing" complaints.
 
 ================================================================================
-5. PRIORITY 4: TELEGRAM IN-APP WEBAPP STREAMING (EMBEDDED PLAYER)
-================================================================================
-PROBLEM:
-Tapping the streaming URL opens an external mobile browser, interrupting the
-Telegram chatting experience.
-
-SOLUTION / UPGRADE SPEC:
-1. Use Pyrogram's InlineKeyboardButton(text="▶️ Watch Online", web_app=WebAppInfo(url=stream_url)).
-2. Inside req.html, Telegram WebApp SDK (telegram-web-app.js) automatically
-   adjusts to Telegram's viewport theme (dark mode / light mode).
-3. Keep the ⚡ 1DM / Fast DL button prominent inside the WebApp player so users
-   who want external multi-threaded downloads still have 1-tap access.
-
-BENEFIT:
-Native, premium user experience that keeps users directly inside your Telegram bot.
-
-================================================================================
-6. PRIORITY 5: AUDIO & LANGUAGE TAG DETECTION ([HIN], [ENG], [MULTI])
+5. PRIORITY 4: AUDIO & LANGUAGE TAG DETECTION ([HIN], [ENG], [MULTI])
 ================================================================================
 PROBLEM:
 Group members constantly ask: "Is this Hindi?", "Tamil dubbed available?".
@@ -138,7 +120,7 @@ BENEFIT:
 Instantly clarifies audio language before the user wastes time downloading.
 
 ================================================================================
-7. PRIORITY 6: UNIQUE HASH DUPLICATE DEDUPLICATION IN MONGODB
+6. PRIORITY 5: UNIQUE HASH DUPLICATE DEDUPLICATION IN MONGODB
 ================================================================================
 PROBLEM:
 Multiple source channels often contain the identical file with slightly different
@@ -155,7 +137,7 @@ BENEFIT:
 Saves MongoDB database storage, keeps indexes fast, and prevents duplicate button rows.
 
 ================================================================================
-8. IMPLEMENTATION & TESTING GUIDE
+7. IMPLEMENTATION & TESTING GUIDE
 ================================================================================
 Safe deployment workflow on your OCI VM (144.24.154.135):
 

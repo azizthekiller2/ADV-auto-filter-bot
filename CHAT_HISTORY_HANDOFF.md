@@ -108,9 +108,6 @@ The repository now contains a complete, production-vetted upgrade blueprint in `
 4. **Multi-Audio & Language Badges ([Hin], [Eng], [Multi])**:
    - Display audio flags directly on buttons so users know audio tracks before downloading.
    - Risk: **Zero Risk** (Simple title string matching).
-5. **Telegram In-App WebApp Streaming**:
-   - In `plugins/route.py`, support `web_app=WebAppInfo(url=...)` for Telegram client in-app player.
-   - Risk: **Low Risk** (Older clients automatically open standard browser link).
 
 ### Zero-Crash Architecture Guarantee:
 - None of these features modify or delete existing MongoDB documents.
