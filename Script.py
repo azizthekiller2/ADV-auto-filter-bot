@@ -224,9 +224,8 @@ Nᴀᴍᴇ : {}
 
 Mᴇꜱꜱᴀɢᴇ : <b>{}</b>"""
     
-    CAPTION = """<b><a href="https://t.me/backupchannek">{file_name}</a></b>\n\n<b>❤️ ꜰɪʟᴇ ᴀᴅᴅᴇᴅ ʙʏ ᴀᴢɪᴢ ꜱᴇʀ ❤️</b>\n\n<b>⚜️ Powered By : <a href="https://t.me/backupchannek">[ Moviebot123 ]</a></b>"""
+    CAPTION = """<b><a href="https://t.me/backupchannek">{file_name}</a></b>\n\n<b>❤️ ꜰɪʟᴇ ᴀᴅᴅᴇᴅ ʙʏ ᴀᴢɪᴢ ꜱᴇʀ ❤️</b>\n\n⚡ <b>Speed Tip:</b> <i>Chrome downloads in 1 single thread (~4 MB/s). For maximum 15-25 MB/s speed, open download link in 1DM / ADM!</i>\n\n<b>⚜️ Powered By : <a href="https://t.me/backupchannek">[ Moviebot123 ]</a></b>"""
 
-    
     MOVIE_UPDATE_NOTIFY_TXT = """
 </b><a href={poster_url}>📥</a><a href={imdb_url}>New {tag} Added</a></b>
 

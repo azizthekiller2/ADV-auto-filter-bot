@@ -237,7 +237,7 @@ else:
     ON_HEROKU = False
 BIND_ADRESS = str(getenv('WEB_SERVER_BIND_ADDRESS', '0.0.0.0'))
 FQDN = str(getenv('FQDN') or getenv('RAILWAY_PUBLIC_DOMAIN') or BIND_ADRESS) if not ON_HEROKU or getenv('FQDN') else APP_NAME+'.herokuapp.com'
-URL = "https://{}/".format(FQDN) if ON_HEROKU or NO_PORT else "https://{}:{}/".format(FQDN, PORT)
+URL = "https://{}/".format(FQDN) if NO_PORT else "https://{}:{}/".format(FQDN, PORT) if ON_HEROKU or NO_PORT else "https://{}:{}/".format(FQDN, PORT)
 SLEEP_THRESHOLD = int(environ.get('SLEEP_THRESHOLD', '60'))
 WORKERS = int(environ.get('WORKERS', '4'))
 SESSION_NAME = str(environ.get('SESSION_NAME', 'MovieBot'))
@@ -252,9 +252,9 @@ else:
     ON_HEROKU = False
 HAS_SSL = is_enabled(getenv('HAS_SSL', 'True'), True)  # Already correct
 if HAS_SSL:
-    URL = "https://{}/".format(FQDN)
+    URL = "https://{}/".format(FQDN) if NO_PORT else "https://{}:{}/".format(FQDN, PORT)
 else:
-    URL = "http://{}/".format(FQDN)
+    URL = "http://{}/".format(FQDN) if NO_PORT else "http://{}:{}/".format(FQDN, PORT)
 
 # ============================
 # Reactions Configuration
