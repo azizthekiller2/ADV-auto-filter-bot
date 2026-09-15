@@ -82,3 +82,38 @@ This repository hosts **ADV-auto-filter-bot** (Auto filter ADV, @Moviebot123), r
   ```bash
   cd /home/ubuntu/ADV-auto-filter-bot && git pull && sudo systemctl restart adv_filter_bot
   ```
+
+---
+
+## 4. Recommended Upgrades & Future Feature Roadmap
+
+The repository now contains a complete, production-vetted upgrade blueprint in `BOT_FEATURE_UPGRADES.txt`. 
+
+### Key Planned Features & Safe Implementation Order:
+1. **/fsub Command Alias & Interactive Sub-Check**:
+   - In `plugins/commands.py`, alias `['set_fsub', 'fsub']`.
+   - Add `[ ✅ I Have Joined ]` callback button so users don't have to re-type queries.
+   - Risk: **Zero Risk** (100% backward compatible with `/set_fsub`).
+2. **Smart Season & Episode Auto-Grouper**:
+   - In `plugins/pmfilter.py`, regex parse `S01E01` / `Episode 1`.
+   - Collapse 16-50 files into a clean `[ 📁 Season 1 (16 Episodes) ]` button with sub-keyboards.
+   - Risk: **Zero Risk** (In-memory button layout only; fallback to standard list if no regex match).
+3. **Quality & Resolution Filter Badges (480p / 720p / 1080p / 4K)**:
+   - In `plugins/pmfilter.py`, display resolution filter chips above search results.
+   - Filters in-memory results so mobile data users can pick 480p/720p and Wi-Fi users pick 1080p/4K.
+   - Risk: **Zero Risk** (No extra database overhead).
+4. **Fuzzy Search & Typo Auto-Correction (Did You Mean?)**:
+   - In `plugins/pmfilter.py`, if database query returns 0 matches, run `difflib.get_close_matches` against indexed titles.
+   - Suggest: *Did you mean: Avengers: Endgame?*.
+   - Risk: **Zero Risk** (Only fires when 0 files found; normal search unaffected).
+5. **Multi-Audio & Language Badges ([Hin], [Eng], [Multi])**:
+   - Display audio flags directly on buttons so users know audio tracks before downloading.
+   - Risk: **Zero Risk** (Simple title string matching).
+6. **Telegram In-App WebApp Streaming**:
+   - In `plugins/route.py`, support `web_app=WebAppInfo(url=...)` for Telegram client in-app player.
+   - Risk: **Low Risk** (Older clients automatically open standard browser link).
+
+### Zero-Crash Architecture Guarantee:
+- None of these features modify or delete existing MongoDB documents.
+- All title parsing and grouping logic MUST be wrapped in `try/except` blocks with fallback to standard buttons.
+- Always run `python3 -m py_compile <modified_file>` before `sudo systemctl restart adv_filter_bot`.
