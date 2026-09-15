@@ -1609,7 +1609,7 @@ async def verify_status(bot, message):
     except Exception as e:
         await message.reply_text(f"Error: {e}")
 
-@Client.on_message(filters.command('set_fsub'))
+@Client.on_message(filters.command(['set_fsub', 'fsub']))
 async def set_fsub(client, message):
     try:
         userid = message.from_user.id if message.from_user else None
